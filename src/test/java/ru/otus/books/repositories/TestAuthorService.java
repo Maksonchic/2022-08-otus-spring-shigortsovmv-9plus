@@ -54,15 +54,4 @@ class TestAuthorService {
 		assertEquals(author.getFirstName(), authorDto.getFirstName());
 		assertEquals(author.getMiddleName(), authorDto.getMiddleName());
 	}
-
-	@Test
-	@DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
-	@DisplayName("Сравниваем различные способы получения первого автора")
-	void compareFirst() {
-		AuthorDto a1 = AuthorDto.createDto(em.find(Author.class, 1L));
-		authorDtoService.add("me", "w", "d", "s");
-		assertNotEquals(a1, authorDtoService.getByNickName("me"));
-		assertEquals(a1, authorDtoService.getByNickName("Michael"));
-		assertEquals(a1, authorDtoService.getByNickName("MiChaEL"));
-	}
 }

@@ -7,6 +7,7 @@ import ru.otus.books.dto.AuthorDto;
 import ru.otus.books.dto.BookDto;
 import ru.otus.books.dto.CommentDto;
 import ru.otus.books.dto.GenreDto;
+import ru.otus.books.models.Author;
 import ru.otus.books.models.Book;
 import ru.otus.books.models.Comment;
 import ru.otus.books.repositories.AuthorRepository;
@@ -15,6 +16,7 @@ import ru.otus.books.repositories.GenreRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class BookDtoServiceImpl implements BookDtoService {
@@ -35,6 +37,7 @@ public class BookDtoServiceImpl implements BookDtoService {
     }
 
     @Override
+    @Transactional
     public BookDto add(String title, int page_count, String authorNickName, String genre) {
         Book book = new Book(
                 0,

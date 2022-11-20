@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.otus.books.dto.BookDto;
@@ -14,7 +13,6 @@ import ru.otus.books.dto.CommentDto;
 import ru.otus.books.service.AuthorDtoService;
 import ru.otus.books.service.BookDtoService;
 import ru.otus.books.service.CommentDtoService;
-import ru.otus.books.service.GenreDtoService;
 
 import java.util.List;
 
@@ -27,9 +25,6 @@ public class BookController {
 
     @Autowired
     BookDtoService bookService;
-
-    @Autowired
-    GenreDtoService genreService;
 
     @Autowired
     CommentDtoService commentService;

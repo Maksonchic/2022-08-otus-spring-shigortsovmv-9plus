@@ -8,11 +8,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.otus.books.dto.AuthorDto;
-import ru.otus.books.dto.BookDto;
 import ru.otus.books.service.AuthorDtoService;
-import ru.otus.books.service.BookDtoService;
-import ru.otus.books.service.CommentDtoService;
-import ru.otus.books.service.GenreDtoService;
 
 import java.util.List;
 
@@ -22,15 +18,6 @@ public class AuthorController {
 
     @Autowired
     AuthorDtoService authorService;
-
-    @Autowired
-    BookDtoService bookService;
-
-    @Autowired
-    GenreDtoService genreService;
-
-    @Autowired
-    CommentDtoService commentService;
 
     @GetMapping("/api/v1/authors")
     public List<AuthorDto> getBooks() {
