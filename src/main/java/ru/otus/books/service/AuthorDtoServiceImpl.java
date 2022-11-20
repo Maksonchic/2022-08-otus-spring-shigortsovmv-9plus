@@ -29,8 +29,8 @@ public class AuthorDtoServiceImpl implements AuthorDtoService {
     }
 
     @Override
-    public void add(String nickName, String lastName, String firstName, String middleName) {
-        repo.save(new Author(0, nickName, lastName, firstName, middleName));
+    public AuthorDto add(String nickName, String lastName, String firstName, String middleName) {
+        return AuthorDto.createDto(repo.save(new Author(0, nickName, lastName, firstName, middleName)));
     }
 
     @Override

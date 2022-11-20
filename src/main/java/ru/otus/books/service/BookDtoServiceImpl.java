@@ -36,14 +36,15 @@ public class BookDtoServiceImpl implements BookDtoService {
 
     @Override
     public BookDto add(String title, int page_count, String authorNickName, String genre) {
-        BookDto bookDto = new BookDto(
+        Book book = new Book(
                 0,
                 title,
                 page_count,
-                AuthorDto.createDto(authorRepo.findByNickNameIgnoreCase(authorNickName)),
-                GenreDto.createDto(genreRepo.findByGenreIgnoreCase(genre)),
-                new ArrayList<>());
-        return BookDto.createDto(repo.save(BookDto.createEntity(bookDto)), true);
+                authorRepo.findByNickNameIgnoreCase(authorNickName),
+                genreRepo.findByGenreIgnoreCase(genre),
+                new ArrayList<>()
+        );
+        return BookDto.createDto(repo.save(book), true);
     }
 
     @Override
@@ -53,10 +54,11 @@ public class BookDtoServiceImpl implements BookDtoService {
 
     @Override
     @Transactional
-    public void addBookComment(long bookId, String commentText) {
+    public List<CommentDto> addBookComment(long bookId, String commentText) {
         Book book = repo.findById(bookId);
-        book.getComments().add(new Comment(0, commentText));
-        repo.save(book);
+        Comment comment = new Comment(0, commentText);
+        book.getComments().add(comment);
+        return repo.save(book).getComments().stream().map(CommentDto::createDto).toList();
     }
 
     @Override
