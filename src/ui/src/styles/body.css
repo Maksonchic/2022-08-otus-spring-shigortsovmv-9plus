@@ -1,0 +1,40 @@
+div#entities-changer-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    column-gap: 15px;
+    margin: 10px 50px;
+}
+
+.elements {
+    text-decoration: none;
+    padding: 10px;
+    border: 1px green solid;
+    background-color: grey;
+    color: white;
+}
+
+.elements:hover {
+    color: black;
+    background-color: rgb(220, 220, 220);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.entity-line {
+    display: flex;
+    /* grid-template-columns: repeat(50px 50px); */
+    flex-direction: row;
+    gap: 5px;
+    margin: 0 10px;
+}
+
+.entity-line > div {
+    width: 150px;
+    display: inline-block;
+    height: 40px;
+    border: 1px rgb(201, 201, 201) solid;
+}
+
+.entity-line > div:first-child {
+    width: 20px;
+}
