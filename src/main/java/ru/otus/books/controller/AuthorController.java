@@ -20,21 +20,21 @@ public class AuthorController {
     AuthorDtoService authorService;
 
     @GetMapping("/api/v1/authors")
-    public List<AuthorDto> getBooks() {
+    public List<AuthorDto> getAuthors() {
         return authorService.getAllAuthors();
     }
 
-    @DeleteMapping("/api/v1/authors")
-    public void removeAuthor(@RequestParam("authorNickName") String authorNickName) {
-        authorService.removeByNickName(authorNickName);
-    }
-
     @PostMapping("/api/v1/authors")
-    public AuthorDto addBook(
+    public AuthorDto addAuthor(
             @RequestParam("nickName") String nickName,
             @RequestParam("lastName") String lastName,
             @RequestParam("firstName") String firstName,
             @RequestParam("middleName") String middleName) {
         return authorService.add(nickName, lastName, firstName, middleName);
+    }
+
+    @DeleteMapping("/api/v1/authors")
+    public void removeAuthor(@RequestParam("authorNickName") String authorNickName) {
+        authorService.removeByNickName(authorNickName);
     }
 }

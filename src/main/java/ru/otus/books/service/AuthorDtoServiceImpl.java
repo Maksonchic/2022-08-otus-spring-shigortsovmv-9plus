@@ -18,7 +18,8 @@ public class AuthorDtoServiceImpl implements AuthorDtoService {
 
     @Override
     public List<AuthorDto> getAllAuthors() {
-        return repo.findAll().stream().map(AuthorDto::createDto).toList();
+        List<Author> all = repo.findAll();
+        return all.stream().map(AuthorDto::createDto).toList();
     }
 
     @Override
