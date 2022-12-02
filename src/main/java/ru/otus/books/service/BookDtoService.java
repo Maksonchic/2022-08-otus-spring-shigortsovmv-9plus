@@ -9,6 +9,6 @@ public interface BookDtoService {
     BookDto getById(long id);
     BookDto add(String title, int page_count, String authorNickName, String genre);
     void removeBookById(long id);
-    void addBookComment(long bookId, String commentText);
+    List<CommentDto> addBookComment(long bookId, String commentText);
     List<CommentDto> getBookComments(long bookId);
 }
