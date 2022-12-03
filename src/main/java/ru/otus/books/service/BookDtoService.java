@@ -11,4 +11,6 @@ public interface BookDtoService {
     void removeBookById(long id);
     List<CommentDto> addBookComment(long bookId, String commentText);
     List<CommentDto> getBookComments(long bookId);
+    void removeComment(String commentId);
+    void editComment(String commentId, String newCommentText);
 }

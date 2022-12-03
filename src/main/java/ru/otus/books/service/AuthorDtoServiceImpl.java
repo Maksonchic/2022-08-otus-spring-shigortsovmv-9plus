@@ -6,8 +6,11 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.otus.books.dto.AuthorDto;
 import ru.otus.books.dto.BookDto;
 import ru.otus.books.models.Author;
+import ru.otus.books.dto.CommentDto;
 import ru.otus.books.repositories.AuthorRepository;
+import ru.otus.books.repositories.BookRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -16,17 +19,19 @@ public class AuthorDtoServiceImpl implements AuthorDtoService {
     @Autowired
     private AuthorRepository repo;
 
+    @Autowired
+    private BookRepository bookRepository;
+
     @Override
     public List<AuthorDto> getAllAuthors() {
-        List<Author> all = repo.findAll();
-        return all.stream().map(AuthorDto::createDto).toList();
+        return repo.findAll().stream().map(AuthorDto::createDto).toList();
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<BookDto> getAuthorBooks(String authorNickName) {
         Author author = repo.findByNickNameIgnoreCase(authorNickName);
-        return author.getBooks().stream().map(BookDto::createDto).toList();
+        return author.getBooks().stream().map(b -> BookDto.createDto(b, true)).toList();
     }
 
     @Override
@@ -37,6 +42,10 @@ public class AuthorDtoServiceImpl implements AuthorDtoService {
     @Override
     @Transactional
     public void removeByNickName(String nickName) {
-        repo.delete(repo.findByNickNameIgnoreCase(nickName));
+        Author author = repo.findByNickNameIgnoreCase(nickName);
+        List<CommentDto> comms = new ArrayList<>();
+        author.getBooks().forEach(b -> comms.addAll(b.getComments()));
+        repo.delete(author);
+        bookRepository.deleteAll(author.getBooks());
     }
 }

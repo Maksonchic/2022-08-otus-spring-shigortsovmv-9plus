@@ -8,23 +8,14 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
-import ru.otus.books.dto.AuthorDto;
-import ru.otus.books.dto.BookDto;
-import ru.otus.books.dto.GenreDto;
 import ru.otus.books.models.Author;
 import ru.otus.books.models.Book;
 import ru.otus.books.models.Genre;
 import ru.otus.books.repositories.AuthorRepository;
 import ru.otus.books.repositories.BookRepository;
-import ru.otus.books.repositories.CommentRepository;
 import ru.otus.books.repositories.GenreRepository;
-import ru.otus.books.service.AuthorDtoService;
 import ru.otus.books.service.AuthorDtoServiceImpl;
-import ru.otus.books.service.BookDtoService;
 import ru.otus.books.service.BookDtoServiceImpl;
-import ru.otus.books.service.CommentDtoService;
-import ru.otus.books.service.CommentDtoServiceImpl;
-import ru.otus.books.service.GenreDtoServiceImpl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(BookController.class)
-@Import({BookDtoServiceImpl.class, AuthorDtoServiceImpl.class, CommentDtoServiceImpl.class})
+@Import({BookDtoServiceImpl.class, AuthorDtoServiceImpl.class})
 @DisplayName("Книги")
 class TestBookController {
 
@@ -50,9 +41,6 @@ class TestBookController {
 
 	@MockBean
 	private AuthorRepository authorRepo;
-
-	@MockBean
-	private CommentRepository commentRepo;
 
 	@MockBean
 	private GenreRepository genreRepo;

@@ -12,7 +12,6 @@ import ru.otus.books.dto.BookDto;
 import ru.otus.books.dto.CommentDto;
 import ru.otus.books.service.AuthorDtoService;
 import ru.otus.books.service.BookDtoService;
-import ru.otus.books.service.CommentDtoService;
 
 import java.util.List;
 
@@ -25,9 +24,6 @@ public class BookController {
 
     @Autowired
     BookDtoService bookService;
-
-    @Autowired
-    CommentDtoService commentService;
 
     @GetMapping("/api/v1/books/author/{authorNickName}")
     public List<BookDto> getBooks(@PathVariable String authorNickName) {
@@ -54,8 +50,8 @@ public class BookController {
     }
 
     @DeleteMapping("/api/v1/comments")
-    public void removeBookComment(@RequestParam("commentId") long commentId) {
-        commentService.removeComment(commentId);
+    public void removeBookComment(@RequestParam("commentId") String commentId) {
+        bookService.removeComment(commentId);
     }
 
     @PostMapping("/api/v1/comments")
