@@ -1,37 +1,40 @@
 package ru.otus.books.models;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.Transient;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 import ru.otus.books.dto.CommentDto;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Document(collection = "BOOKS")
 public class Book {
 
-    @Transient
-    public static final String SEQUENCE_NAME = "books_sequence";
-
     @Id
-    private long id;
+    @JsonProperty("bookId")
+    private String id;
     private String title;
+    @JsonProperty("page_count")
     private int pageCount;
-    private Long author;
-    @DBRef
+    @JsonProperty("authorNickName")
+    private String author;
     private Genre genre;
     private List<CommentDto> comments;
 
-    public long getId() {
+    public String getId() {
+        if (this.id == null) {
+            this.id = UUID.randomUUID().toString();
+        }
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -51,11 +54,11 @@ public class Book {
         this.pageCount = pageCount;
     }
 
-    public Long getAuthor() {
+    public String getAuthor() {
         return author;
     }
 
-    public void setAuthor(Long author) {
+    public void setAuthor(String author) {
         this.author = author;
     }
 
@@ -68,6 +71,9 @@ public class Book {
     }
 
     public List<CommentDto> getComments() {
+        if (this.comments == null) {
+            this.comments = new ArrayList<>();
+        }
         return comments;
     }
 

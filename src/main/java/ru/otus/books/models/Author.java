@@ -1,46 +1,34 @@
 package ru.otus.books.models;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.Transient;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.UUID;
 
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Document(collection = "AUTHORS")
 public class Author {
 
-    @Transient
-    public static final String SEQUENCE_NAME = "authors_sequence";
-
     @Id
-    private long id;
+    private String id;
+    @JsonProperty("authorNickName")
     private String nickName;
     private String lastName;
     private String firstName;
     private String middleName;
-    @DBRef
-    private List<Book> books;
 
-    public Author(long id, String nickName, String lastName, String firstName, String middleName) {
-        this.id = id;
-        this.nickName = nickName;
-        this.lastName = lastName;
-        this.firstName = firstName;
-        this.middleName = middleName;
-        this.books = new ArrayList<>();
-    }
-
-    public long getId() {
+    public String getId() {
+        if (this.id == null) {
+            this.id = UUID.randomUUID().toString();
+        }
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -76,14 +64,6 @@ public class Author {
         this.middleName = middleName;
     }
 
-    public List<Book> getBooks() {
-        return books;
-    }
-
-    public void setBooks(List<Book> books) {
-        this.books = books;
-    }
-
     @Override
     public String toString() {
         return "Author{" +
@@ -92,7 +72,6 @@ public class Author {
                 ", lastName='" + lastName + '\'' +
                 ", firstName='" + firstName + '\'' +
                 ", middleName='" + middleName + '\'' +
-                ", books=" + books +
                 '}';
     }
 }

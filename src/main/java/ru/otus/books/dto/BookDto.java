@@ -3,19 +3,20 @@ package ru.otus.books.dto;
 import lombok.EqualsAndHashCode;
 import ru.otus.books.models.Book;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @EqualsAndHashCode
 public class BookDto {
 
-    private final long id;
+    private final String id;
     private final String title;
     private final int pageCount;
-    private final Long author;
+    private final String author;
     private final GenreDto genre;
     private final List<CommentDto> comments;
 
-    public BookDto(long id, String title, int pageCount, Long author, GenreDto genre, List<CommentDto> comments) {
+    public BookDto(String id, String title, int pageCount, String author, GenreDto genre, List<CommentDto> comments) {
         this.id = id;
         this.title = title;
         this.pageCount = pageCount;
@@ -52,7 +53,7 @@ public class BookDto {
                 bookDto.getComments());
     }
 
-    public long getId() {
+    public String getId() {
         return id;
     }
 
@@ -64,7 +65,7 @@ public class BookDto {
         return pageCount;
     }
 
-    public Long getAuthor() {
+    public String getAuthor() {
         return author;
     }
 
