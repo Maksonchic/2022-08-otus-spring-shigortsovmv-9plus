@@ -1,49 +1,41 @@
 package ru.otus.books.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
-import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.reactive.server.WebTestClient;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import ru.otus.books.models.Genre;
 import ru.otus.books.repositories.GenreRepository;
-import ru.otus.books.service.AuthorDtoServiceImpl;
-import ru.otus.books.service.GenreDtoServiceImpl;
 
-import java.util.List;
+import static org.mockito.Mockito.when;
 
-import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-@WebMvcTest(GenreController.class)
-@Import(GenreDtoServiceImpl.class)
+@WebFluxTest(GenreController.class)
 @DisplayName("Жанры")
 class TestGenreController {
 
-	@Autowired
-	private MockMvc mvc;
-
-	@Autowired
-	private ObjectMapper mapper;
-
 	@MockBean
-	private GenreRepository repo;
+	private GenreRepository genreRepository;
+
+	@Autowired
+	WebTestClient webClient;
 
 	@Test
 	@DisplayName("Получение")
-	void testConvertEntityDto() throws Exception {
-		List<Genre> genres = List.of(
-				new Genre(1, "A"),
-				new Genre(2, "B") );
-		given(repo.findAll()).willReturn(genres);
+	void testGetAll() {
+		Flux<Genre> genreMono = Flux.just(new Genre("s2f", "qwe"), new Genre("s2f2", "qwe3"));
 
-		mvc.perform(get("/api/v1/genres"))
-				.andExpect(status().isOk())
-				.andExpect(content().json(mapper.writeValueAsString(genres)));
+		when(genreRepository.findAll())
+				.then((Answer<Flux<Genre>>) invocation -> genreMono);
+
+		webClient.get()
+				.uri("/api/v1/genres")
+				.exchange()
+				.expectStatus().is2xxSuccessful()
+				.expectStatus().isOk();
 	}
 }

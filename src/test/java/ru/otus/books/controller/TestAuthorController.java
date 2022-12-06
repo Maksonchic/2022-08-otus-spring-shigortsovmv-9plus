@@ -1,92 +1,74 @@
 package ru.otus.books.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.reactive.server.WebTestClient;
+import org.springframework.web.reactive.function.BodyInserters;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import ru.otus.books.models.Author;
 import ru.otus.books.repositories.AuthorRepository;
-import ru.otus.books.service.AuthorDtoServiceImpl;
+import ru.otus.books.repositories.BookRepository;
 
-import java.util.ArrayList;
-import java.util.List;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
-import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-@WebMvcTest(AuthorController.class)
-@Import(AuthorDtoServiceImpl.class)
+@WebFluxTest(controllers = AuthorController.class)
 @DisplayName("Авторы")
 class TestAuthorController {
 
-	@Autowired
-	private MockMvc mvc;
-
-	@Autowired
-	private ObjectMapper mapper;
+	@MockBean
+	AuthorRepository authorRepository;
 
 	@MockBean
-	private AuthorRepository repo;
+	BookRepository bookRepository;
+
+	@Autowired
+	WebTestClient webClient;
+
+	@Test
+	@DisplayName("Сохранение")
+	void testAuthorSave() {
+		Author author = new Author("a2", "s", "", "", "1");
+
+		when(authorRepository.save(any()))
+				.then((Answer<Mono<Author>>) invocation -> Mono.just(author));
+
+		webClient.post()
+				.uri("/api/v1/authors")
+				.contentType(MediaType.APPLICATION_JSON)
+				.body(BodyInserters.fromValue(author))
+				.exchange()
+				.expectStatus().isOk();
+	}
 
 	@Test
 	@DisplayName("Получение всех")
-	public void getAllAuthors() throws Exception {
-		List<Author> authors = List.of(
-				new Author(1, "Michael", "Last", "Firstov", "Middleich", new ArrayList<>()),
-				new Author(2, "qwe", "qweFN", "qweLN", "qweMN", new ArrayList<>()) );
-		given(repo.findAll()).willReturn(authors);
+	void testCounter() {
+		Flux<Author> authorFlux = Flux.just(new Author("a1", "f", "", "", ""),
+				new Author("a2", "s", "", "", "1"));
 
-		mvc.perform(get("/api/v1/authors"))
-				.andExpect(status().isOk())
-				.andExpect(content().json(mapper.writeValueAsString(authors)));
+		when(authorRepository.findAll())
+				.then((Answer<Flux<Author>>) invocation -> authorFlux);
+
+		webClient.get()
+				.uri("/api/v1/authors")
+				.exchange()
+				.expectStatus().is2xxSuccessful()
+				.expectStatus().isOk();
 	}
 
 	@Test
-	@DisplayName("Добавление")
-	public void insertAuthor() throws Exception {
-		Author author = new Author(
-				0,
-				"Michael",
-				"Last",
-				"Firstov",
-				"Middleich",
-				new ArrayList<>());
-		given(repo.save(author)).willReturn(author);
-
-		mvc.perform(post("/api/v1/authors")
-						.content(String.format("nickName=%s&lastName=%s&firstName=%s&middleName=%s"
-								, author.getNickName()
-								, author.getLastName()
-								, author.getFirstName()
-								, author.getMiddleName()))
-						.contentType(MediaType.APPLICATION_FORM_URLENCODED))
-				.andExpect(status().isOk());
-	}
-
-	@Test
-	@DisplayName("Удаление")
-	public void deleteAuthor() throws Exception {
-		mvc.perform(delete("/api/v1/authors")
-						.content("authorNickName=Michael")
-						.contentType(MediaType.APPLICATION_FORM_URLENCODED))
-				.andExpect(status().isOk());
-	}
-
-	@Test
-	@DisplayName("Ошибка")
-	public void deleteAuthorError() throws Exception {
-		mvc.perform(delete("/api/v1/authors")
-						.content("authorNickNam=Michael")
-						.contentType(MediaType.APPLICATION_FORM_URLENCODED))
-				.andExpect(status().is4xxClientError());
+	@DisplayName("404")
+	void testDirtyPath() {
+		webClient.get()
+				.uri("/api/v1/authors/notValid")
+				.exchange()
+				.expectStatus().isNotFound();
 	}
 }

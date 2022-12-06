@@ -1,8 +1,5 @@
 spring:
-  data:
-    mongodb:
-      authentication-database: admin
-      database: boklib
-      port: 27017
-      host: localhost
+  mongodb:
+    embedded:
+      version: "3.5.5"
 
