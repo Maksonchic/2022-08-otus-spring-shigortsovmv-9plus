@@ -4,6 +4,12 @@ import {  } from "react-router-dom";
 
 export default class Books extends React.Component {
 
+    constructor(props) {
+        super(props);
+        this.state.books = [];
+        this.state.author = window.location.pathname.substring('/books/'.length);
+    }
+
     state = {
         books: [],
         author: window.location.pathname.substring('/books/'.length)
@@ -72,8 +78,9 @@ export default class Books extends React.Component {
                         c2.style.color = 'red';
                         c2.addEventListener('click', () => {
                             repo.removeBookComment(com.id)
-                                .then(() => {
-                                    c.remove();
+                                .then((res) => res.json())
+                                .then((comms) => {
+                                    drawBookComms(comms);
                                 }).catch(alert);
                         }, false);
                         c.appendChild(c1);
@@ -104,9 +111,11 @@ export default class Books extends React.Component {
         params[els[0].name] = els[0].value;
         params[els[1].name] = els[1].value;
         params[els[2].name] = els[2].value;
-        // params[els[3].name] = els[3].value;
         repo.insertBook(params)
             .then((bookDto) => {
+                console.log({books:[...this.state.books, bookDto]});
+                bookDto.page_count = "123";
+                console.log({books:[...this.state.books, bookDto]});
                 _this.setState({books:[...this.state.books, bookDto]});
             })
             .catch((ex) => alert(ex));

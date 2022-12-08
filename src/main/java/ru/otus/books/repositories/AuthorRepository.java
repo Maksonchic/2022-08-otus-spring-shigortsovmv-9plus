@@ -1,8 +1,10 @@
 package ru.otus.books.repositories;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
+import reactor.core.publisher.Mono;
 import ru.otus.books.models.Author;
 
-public interface AuthorRepository extends JpaRepository<Author, Long> {
-    Author findByNickNameIgnoreCase(final String nickName);
+public interface AuthorRepository extends ReactiveMongoRepository<Author, String> {
+    Mono<Author> findByNickNameIgnoreCase(final String nickName);
+    Mono<Void> deleteByNickName(final String nickName);
 }

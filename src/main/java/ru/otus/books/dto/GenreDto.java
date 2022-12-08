@@ -5,10 +5,10 @@ import ru.otus.books.models.Genre;
 
 @EqualsAndHashCode
 public class GenreDto {
-    private final long id;
+    private final String id;
     private final String genre;
 
-    public GenreDto(long id, String genre) {
+    public GenreDto(String id, String genre) {
         this.id = id;
         this.genre = genre;
     }
@@ -26,7 +26,7 @@ public class GenreDto {
         return new Genre(genreDto.getId(), genreDto.getGenre());
     }
 
-    public long getId() {
+    public String getId() {
         return id;
     }
 

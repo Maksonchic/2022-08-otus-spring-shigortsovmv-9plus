@@ -1,56 +1,40 @@
 package ru.otus.books.models;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+import ru.otus.books.dto.CommentDto;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "BOOKS")
-@Entity
+@Document(collection = "BOOKS")
 public class Book {
+
     @Id
-    @Column(name = "book_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
-
-    @Column(name = "title", nullable = false)
+    @JsonProperty("bookId")
+    private String id;
     private String title;
-
-    @Column(name = "page_count", nullable = false)
+    @JsonProperty("page_count")
     private int pageCount;
-
-    @ManyToOne(targetEntity = Author.class, cascade = CascadeType.MERGE)
-    @JoinColumn(name = "author_id")
-    private Author author;
-
-    @ManyToOne(targetEntity = Genre.class, cascade = CascadeType.MERGE)
-    @JoinColumn(name = "genre_id")
+    @JsonProperty("authorNickName")
+    private String author;
     private Genre genre;
+    private List<CommentDto> comments;
 
-    @OneToMany(targetEntity = Comment.class, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "book_id")
-    @Fetch(FetchMode.SUBSELECT)
-    private List<Comment> comments;
-
-    public long getId() {
+    public String getId() {
+        if (this.id == null) {
+            this.id = UUID.randomUUID().toString();
+        }
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -70,11 +54,11 @@ public class Book {
         this.pageCount = pageCount;
     }
 
-    public Author getAuthor() {
+    public String getAuthor() {
         return author;
     }
 
-    public void setAuthor(Author author) {
+    public void setAuthor(String author) {
         this.author = author;
     }
 
@@ -86,11 +70,14 @@ public class Book {
         this.genre = genre;
     }
 
-    public List<Comment> getComments() {
+    public List<CommentDto> getComments() {
+        if (this.comments == null) {
+            this.comments = new ArrayList<>();
+        }
         return comments;
     }
 
-    public void setComments(List<Comment> comments) {
+    public void setComments(List<CommentDto> comments) {
         this.comments = comments;
     }
 
@@ -100,7 +87,7 @@ public class Book {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", pageCount=" + pageCount +
-                ", author=" + author.getNickName() +
+                ", author=" + author +
                 ", genre=" + genre.getGenre() +
                 ", comments=" + comments +
                 '}';

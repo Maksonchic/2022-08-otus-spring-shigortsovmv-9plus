@@ -9,14 +9,14 @@ import java.util.List;
 @EqualsAndHashCode
 public class BookDto {
 
-    private final long id;
+    private final String id;
     private final String title;
     private final int pageCount;
-    private final AuthorDto author;
+    private final String author;
     private final GenreDto genre;
     private final List<CommentDto> comments;
 
-    public BookDto(long id, String title, int pageCount, AuthorDto author, GenreDto genre, List<CommentDto> comments) {
+    public BookDto(String id, String title, int pageCount, String author, GenreDto genre, List<CommentDto> comments) {
         this.id = id;
         this.title = title;
         this.pageCount = pageCount;
@@ -33,16 +33,14 @@ public class BookDto {
         if (!isAuthorContains) {
             book.setAuthor(null);
         }
-        AuthorDto authorDto = AuthorDto.createDto(book.getAuthor());
         GenreDto genreDto = GenreDto.createDto(book.getGenre());
-        List<CommentDto> commentDtos = book.getComments().stream().map(CommentDto::createDto).toList();
         return new BookDto(
                 book.getId(),
                 book.getTitle(),
                 book.getPageCount(),
-                authorDto,
+                book.getAuthor(),
                 genreDto,
-                commentDtos);
+                book.getComments());
     }
 
     public static Book createEntity(final BookDto bookDto) {
@@ -50,12 +48,12 @@ public class BookDto {
                 bookDto.getId(),
                 bookDto.getTitle(),
                 bookDto.getPageCount(),
-                AuthorDto.createEntity(bookDto.getAuthor()),
+                bookDto.getAuthor(),
                 GenreDto.createEntity(bookDto.getGenre()),
-                bookDto.getComments().stream().map(CommentDto::createEntity).toList());
+                bookDto.getComments());
     }
 
-    public long getId() {
+    public String getId() {
         return id;
     }
 
@@ -67,7 +65,7 @@ public class BookDto {
         return pageCount;
     }
 
-    public AuthorDto getAuthor() {
+    public String getAuthor() {
         return author;
     }
 
