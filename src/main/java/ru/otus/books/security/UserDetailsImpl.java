@@ -1,6 +1,7 @@
 package ru.otus.books.security;
 
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import ru.otus.books.models.User;
 
@@ -16,7 +17,7 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        return this.user.getRoles().stream().map(r -> new SimpleGrantedAuthority(r.getName())).toList();
     }
 
     @Override

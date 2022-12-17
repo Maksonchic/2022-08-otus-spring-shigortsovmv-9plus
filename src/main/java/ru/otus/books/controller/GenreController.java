@@ -1,6 +1,7 @@
 package ru.otus.books.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.otus.books.dto.GenreDto;
@@ -14,6 +15,7 @@ public class GenreController {
     @Autowired
     GenreDtoService genreService;
 
+    @PreAuthorize("hasAuthority('USER')")
     @GetMapping("/api/v1/genres")
     public List<GenreDto> getGenres() {
         return genreService.getAllGenres();
