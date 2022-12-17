@@ -1,12 +1,12 @@
 import config from '../../custom-config';
 
 function getAuthors() {
-    return fetch(`${config.protocol}://${config.host}:${config.port}${config.path}/api/v1/authors`)
+    return fetch(`/api/v1/authors`)
         .then(res => res.json());
 }
 
 function insertAuthor(params) {
-    return fetch(`${config.protocol}://${config.host}:${config.port}${config.path}/api/v1/authors`, {
+    return fetch(`/api/v1/authors`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: `nickName=${params.nickName}&lastName=${params.lastName}&firstName=${params.firstName}&middleName=${params.middleName}`
@@ -19,7 +19,7 @@ function insertAuthor(params) {
 }
 
 function removeAuthor(authorNickName) {
-    return fetch(`${config.protocol}://${config.host}:${config.port}${config.path}/api/v1/authors`, {
+    return fetch(`/api/v1/authors`, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: `authorNickName=${authorNickName}`
