@@ -1,6 +1,8 @@
 package ru.otus.books.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,7 +10,11 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 import ru.otus.books.models.Author;
 import ru.otus.books.repositories.AuthorRepository;
 import ru.otus.books.service.AuthorDtoServiceImpl;
@@ -17,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.mockito.BDDMockito.given;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -37,7 +44,11 @@ class TestAuthorController {
 	@MockBean
 	private AuthorRepository repo;
 
+	@Autowired
+	private WebApplicationContext context;
+
 	@Test
+	@WithMockUser
 	@DisplayName("Получение всех")
 	public void getAllAuthors() throws Exception {
 		List<Author> authors = List.of(
@@ -51,6 +62,7 @@ class TestAuthorController {
 	}
 
 	@Test
+	@WithMockUser
 	@DisplayName("Добавление")
 	public void insertAuthor() throws Exception {
 		Author author = new Author(
@@ -73,11 +85,11 @@ class TestAuthorController {
 	}
 
 	@Test
+	@WithMockUser
 	@DisplayName("Удаление")
 	public void deleteAuthor() throws Exception {
 		mvc.perform(delete("/api/v1/authors")
-						.content("authorNickName=Michael")
-						.contentType(MediaType.APPLICATION_FORM_URLENCODED))
+						.content("authorNickName=Michael"))
 				.andExpect(status().isOk());
 	}
 
