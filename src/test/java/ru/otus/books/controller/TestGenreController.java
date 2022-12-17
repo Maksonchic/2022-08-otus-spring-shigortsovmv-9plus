@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.otus.books.models.Genre;
 import ru.otus.books.repositories.GenreRepository;
@@ -35,6 +36,7 @@ class TestGenreController {
 	private GenreRepository repo;
 
 	@Test
+	@WithMockUser
 	@DisplayName("Получение")
 	void testConvertEntityDto() throws Exception {
 		List<Genre> genres = List.of(
