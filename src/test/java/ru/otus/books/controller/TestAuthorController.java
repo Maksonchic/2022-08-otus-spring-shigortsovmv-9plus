@@ -1,5 +1,8 @@
 package ru.otus.books.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.stubbing.Answer;
@@ -7,10 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.reactive.server.WebTestClient;
-import org.springframework.web.reactive.function.BodyInserters;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 import ru.otus.books.models.Author;
 import ru.otus.books.repositories.AuthorRepository;
 import ru.otus.books.repositories.BookRepository;
@@ -18,7 +22,16 @@ import ru.otus.books.repositories.BookRepository;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-@WebFluxTest(controllers = AuthorController.class)
+import static org.mockito.BDDMockito.given;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+@WebMvcTest(AuthorController.class)
+@Import(AuthorDtoServiceImpl.class)
 @DisplayName("Авторы")
 class TestAuthorController {
 
@@ -31,13 +44,17 @@ class TestAuthorController {
 	@Autowired
 	WebTestClient webClient;
 
-	@Test
-	@DisplayName("Сохранение")
-	void testAuthorSave() {
-		Author author = new Author("a2", "s", "", "", "1");
+	@Autowired
+	private WebApplicationContext context;
 
-		when(authorRepository.save(any()))
-				.then((Answer<Mono<Author>>) invocation -> Mono.just(author));
+	@Test
+	@WithMockUser
+	@DisplayName("Получение всех")
+	public void getAllAuthors() throws Exception {
+		List<Author> authors = List.of(
+				new Author(1, "Michael", "Last", "Firstov", "Middleich", new ArrayList<>()),
+				new Author(2, "qwe", "qweFN", "qweLN", "qweMN", new ArrayList<>()) );
+		given(repo.findAll()).willReturn(authors);
 
 		webClient.post()
 				.uri("/api/v1/authors")
@@ -48,19 +65,28 @@ class TestAuthorController {
 	}
 
 	@Test
-	@DisplayName("Получение всех")
-	void testCounter() {
-		Flux<Author> authorFlux = Flux.just(new Author("a1", "f", "", "", ""),
-				new Author("a2", "s", "", "", "1"));
+	@WithMockUser
+	@DisplayName("Добавление")
+	public void insertAuthor() throws Exception {
+		Author author = new Author(
+				0,
+				"Michael",
+				"Last",
+				"Firstov",
+				"Middleich",
+				new ArrayList<>());
+		given(repo.save(author)).willReturn(author);
 
 		when(authorRepository.findAll())
 				.then((Answer<Flux<Author>>) invocation -> authorFlux);
 
-		webClient.get()
-				.uri("/api/v1/authors")
-				.exchange()
-				.expectStatus().is2xxSuccessful()
-				.expectStatus().isOk();
+	@Test
+	@WithMockUser
+	@DisplayName("Удаление")
+	public void deleteAuthor() throws Exception {
+		mvc.perform(delete("/api/v1/authors")
+						.content("authorNickName=Michael"))
+				.andExpect(status().isOk());
 	}
 
 	@Test

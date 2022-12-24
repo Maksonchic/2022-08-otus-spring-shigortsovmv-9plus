@@ -6,9 +6,9 @@ import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.web.reactive.server.WebTestClient;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
+import org.springframework.context.annotation.Import;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.web.servlet.MockMvc;
 import ru.otus.books.models.Genre;
 import ru.otus.books.repositories.GenreRepository;
 
@@ -25,6 +25,7 @@ class TestGenreController {
 	WebTestClient webClient;
 
 	@Test
+	@WithMockUser
 	@DisplayName("Получение")
 	void testGetAll() {
 		Flux<Genre> genreMono = Flux.just(new Genre("s2f", "qwe"), new Genre("s2f2", "qwe3"));

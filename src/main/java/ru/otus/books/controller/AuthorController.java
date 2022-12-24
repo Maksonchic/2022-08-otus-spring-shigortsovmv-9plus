@@ -1,7 +1,5 @@
 package ru.otus.books.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,15 +14,14 @@ import ru.otus.books.repositories.BookRepository;
 
 import java.time.Duration;
 
-@CrossOrigin
 @RestController
 public class AuthorController {
 
-    @Autowired
-    AuthorRepository repo;
+    private final AuthorDtoService authorService;
 
-    @Autowired
-    BookRepository bookRepository;
+    public AuthorController(AuthorDtoService authorService) {
+        this.authorService = authorService;
+    }
 
     @GetMapping("/api/v1/authors")
     public Flux<AuthorDto> getAuthors() {

@@ -6,11 +6,12 @@ import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.reactive.server.WebTestClient;
-import org.springframework.web.reactive.function.BodyInserters;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
+import org.springframework.context.annotation.Import;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.web.servlet.MockMvc;
+import ru.otus.books.dto.AuthorDto;
+import ru.otus.books.dto.BookDto;
+import ru.otus.books.dto.GenreDto;
 import ru.otus.books.models.Author;
 import ru.otus.books.models.Book;
 import ru.otus.books.models.Genre;
@@ -63,22 +64,28 @@ class TestBookController {
 	}
 
 	@Test
-	@DisplayName("Получение всех")
-	void testCounter() {
-		Flux<Book> bookFlux = Flux.just(new Book("asd2", "", 123, "s2f", new Genre("1", ""), new ArrayList<>()),
-				new Book("asd", "", 12, "s2f", new Genre("1", ""), new ArrayList<>()));
+	@WithMockUser
+	@DisplayName("Получаем всех Михаеля")
+	public void checkFind() throws Exception {
+		List<Book> books = List.of(
+				new Book(0, "New one", 404, null, new Genre(0, "a"), new ArrayList<>()),
+				new Book(1, "New second", 302, null, new Genre(0, "a"), new ArrayList<>()),
+				new Book(2, "Three one", 500,
+						new Author(0, "a", "b", "c", "d", List.of(
+								new Book(1, "New second", 302, null,
+										new Genre(0, "a"), new ArrayList<>()))),
+						new Genre(0, "a"), new ArrayList<>())
+		);
+		Author author = new Author(0, "a", "b", "c", "d", books);
 
-		when(authorRepository.findByNickNameIgnoreCase(any()))
-				.then((Answer<Mono<Author>>) invocation -> Mono.just(
-						new Author("s2f", "Michael", "", "", "")));
+		given(authorRepo.findByNickNameIgnoreCase("michael")).willReturn(author);
 
-		when(bookRepository.findAllByAuthor(any()))
-				.then((Answer<Flux<Book>>) invocation -> bookFlux);
+		System.out.println(mapper.writeValueAsString(books));
 
-		webClient.get()
-				.uri("/api/v1/books/author/Michael")
-				.exchange()
-				.expectStatus().is2xxSuccessful()
-				.expectStatus().isOk();
+		books.get(2).setAuthor(null);
+
+		mvc.perform(get("/api/v1/books/author/michael"))
+				.andExpect(status().isOk())
+				.andExpect(content().json(mapper.writeValueAsString(books)));
 	}
 }

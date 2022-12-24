@@ -1,7 +1,5 @@
 package ru.otus.books.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,18 +17,18 @@ import ru.otus.books.repositories.GenreRepository;
 
 import java.util.UUID;
 
-@CrossOrigin
 @RestController
 public class BookController {
 
-    @Autowired
-    BookRepository repo;
+    private final AuthorDtoService authorService;
+    private final BookDtoService bookService;
+    private final CommentDtoService commentService;
 
-    @Autowired
-    AuthorRepository authorRepository;
-
-    @Autowired
-    GenreRepository genreRepository;
+    public BookController(AuthorDtoService authorService, BookDtoService bookService, CommentDtoService commentService) {
+        this.authorService = authorService;
+        this.bookService = bookService;
+        this.commentService = commentService;
+    }
 
     @GetMapping("/api/v1/books/author/{authorNickName}")
     public Flux<BookDto> getBooks(@PathVariable String authorNickName) {
