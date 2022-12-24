@@ -1,6 +1,5 @@
 package ru.otus.books.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,14 +17,15 @@ import java.util.List;
 @RestController
 public class BookController {
 
-    @Autowired
-    AuthorDtoService authorService;
+    private final AuthorDtoService authorService;
+    private final BookDtoService bookService;
+    private final CommentDtoService commentService;
 
-    @Autowired
-    BookDtoService bookService;
-
-    @Autowired
-    CommentDtoService commentService;
+    public BookController(AuthorDtoService authorService, BookDtoService bookService, CommentDtoService commentService) {
+        this.authorService = authorService;
+        this.bookService = bookService;
+        this.commentService = commentService;
+    }
 
     @GetMapping("/api/v1/books/author/{authorNickName}")
     public List<BookDto> getBooks(@PathVariable String authorNickName) {
