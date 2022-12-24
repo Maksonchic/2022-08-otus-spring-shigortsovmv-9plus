@@ -1,6 +1,6 @@
 package ru.otus.books.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.books.dto.AuthorDto;
@@ -13,15 +13,20 @@ import java.util.List;
 @Service
 public class AuthorDtoServiceImpl implements AuthorDtoService {
 
-    @Autowired
-    private AuthorRepository repo;
+    private final AuthorRepository repo;
 
+    public AuthorDtoServiceImpl(AuthorRepository repo) {
+        this.repo = repo;
+    }
+
+    @PreAuthorize("hasAuthority('USER')")
     @Override
     public List<AuthorDto> getAllAuthors() {
         List<Author> all = repo.findAll();
         return all.stream().map(AuthorDto::createDto).toList();
     }
 
+    @PreAuthorize("hasAuthority('USER')")
     @Override
     @Transactional(readOnly = true)
     public List<BookDto> getAuthorBooks(String authorNickName) {
@@ -29,11 +34,13 @@ public class AuthorDtoServiceImpl implements AuthorDtoService {
         return author.getBooks().stream().map(BookDto::createDto).toList();
     }
 
+    @PreAuthorize("hasAuthority('RONIN')")
     @Override
     public AuthorDto add(String nickName, String lastName, String firstName, String middleName) {
         return AuthorDto.createDto(repo.save(new Author(0, nickName, lastName, firstName, middleName)));
     }
 
+    @PreAuthorize("hasAuthority('RONIN')")
     @Override
     @Transactional
     public void removeByNickName(String nickName) {

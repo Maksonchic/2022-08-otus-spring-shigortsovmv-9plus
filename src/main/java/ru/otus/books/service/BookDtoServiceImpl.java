@@ -1,13 +1,10 @@
 package ru.otus.books.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.otus.books.dto.AuthorDto;
 import ru.otus.books.dto.BookDto;
 import ru.otus.books.dto.CommentDto;
-import ru.otus.books.dto.GenreDto;
-import ru.otus.books.models.Author;
 import ru.otus.books.models.Book;
 import ru.otus.books.models.Comment;
 import ru.otus.books.repositories.AuthorRepository;
@@ -16,19 +13,19 @@ import ru.otus.books.repositories.GenreRepository;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 public class BookDtoServiceImpl implements BookDtoService {
 
-    @Autowired
-    BookRepository repo;
+    private final BookRepository repo;
+    private final AuthorRepository authorRepo;
+    private final GenreRepository genreRepo;
 
-    @Autowired
-    AuthorRepository authorRepo;
-
-    @Autowired
-    GenreRepository genreRepo;
+    public BookDtoServiceImpl(BookRepository repo, AuthorRepository authorRepo, GenreRepository genreRepo) {
+        this.repo = repo;
+        this.authorRepo = authorRepo;
+        this.genreRepo = genreRepo;
+    }
 
     @Override
     @Transactional(readOnly = true)
@@ -36,6 +33,7 @@ public class BookDtoServiceImpl implements BookDtoService {
         return BookDto.createDto(repo.findById(id), true);
     }
 
+    @PreAuthorize("hasAuthority('RONIN')")
     @Override
     @Transactional
     public BookDto add(String title, int page_count, String authorNickName, String genre) {
@@ -50,11 +48,13 @@ public class BookDtoServiceImpl implements BookDtoService {
         return BookDto.createDto(repo.save(book), true);
     }
 
+    @PreAuthorize("hasAuthority('RONIN')")
     @Override
     public void removeBookById(long id) {
         repo.delete(repo.findById(id));
     }
 
+    @PreAuthorize("hasAuthority('RONIN')")
     @Override
     @Transactional
     public List<CommentDto> addBookComment(long bookId, String commentText) {
@@ -64,6 +64,7 @@ public class BookDtoServiceImpl implements BookDtoService {
         return repo.save(book).getComments().stream().map(CommentDto::createDto).toList();
     }
 
+    @PreAuthorize("hasAuthority('USER')")
     @Override
     @Transactional(readOnly = true)
     public List<CommentDto> getBookComments(long bookId) {
