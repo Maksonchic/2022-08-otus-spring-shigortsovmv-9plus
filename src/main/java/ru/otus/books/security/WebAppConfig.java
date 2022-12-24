@@ -10,7 +10,6 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableGlobalMethodSecurity(
-        securedEnabled = true,
         prePostEnabled = true
 )
 public class WebAppConfig {
