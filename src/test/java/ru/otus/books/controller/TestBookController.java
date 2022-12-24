@@ -1,10 +1,10 @@
 package ru.otus.books.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -17,46 +17,51 @@ import ru.otus.books.models.Book;
 import ru.otus.books.models.Genre;
 import ru.otus.books.repositories.AuthorRepository;
 import ru.otus.books.repositories.BookRepository;
-import ru.otus.books.repositories.CommentRepository;
 import ru.otus.books.repositories.GenreRepository;
-import ru.otus.books.service.AuthorDtoService;
-import ru.otus.books.service.AuthorDtoServiceImpl;
-import ru.otus.books.service.BookDtoService;
-import ru.otus.books.service.BookDtoServiceImpl;
-import ru.otus.books.service.CommentDtoService;
-import ru.otus.books.service.CommentDtoServiceImpl;
-import ru.otus.books.service.GenreDtoServiceImpl;
 
 import java.util.ArrayList;
-import java.util.List;
 
-import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
-@WebMvcTest(BookController.class)
-@Import({BookDtoServiceImpl.class, AuthorDtoServiceImpl.class, CommentDtoServiceImpl.class})
+@WebFluxTest(controllers = BookController.class)
 @DisplayName("Книги")
 class TestBookController {
 
+	@MockBean
+	AuthorRepository authorRepository;
+
+	@MockBean
+	BookRepository bookRepository;
+
+	@MockBean
+	GenreRepository genreRepository;
+
 	@Autowired
-	private MockMvc mvc;
+	WebTestClient webClient;
 
-	@Autowired
-	private ObjectMapper mapper;
+	@Test
+	@DisplayName("Сохранение")
+	void testAuthorSave() {
+		Book book = new Book("asd", "ff", 12, "Michael", new Genre("1", ""), new ArrayList<>());
 
-	@MockBean
-	private BookRepository repo;
+		when(authorRepository.findByNickNameIgnoreCase(any()))
+				.then((Answer<Mono<Author>>) invocation -> Mono.just(
+						new Author(book.getAuthor(), "Michael", "", "", "")));
 
-	@MockBean
-	private AuthorRepository authorRepo;
+		when(genreRepository.findByGenreIgnoreCase(any()))
+				.then((Answer<Mono<Genre>>) invocation -> Mono.just(book.getGenre()));
 
-	@MockBean
-	private CommentRepository commentRepo;
+		when(bookRepository.save(any()))
+				.then((Answer<Mono<Book>>) invocation -> Mono.just(book));
 
-	@MockBean
-	private GenreRepository genreRepo;
+		webClient.post()
+				.uri("/api/v1/books")
+				.contentType(MediaType.APPLICATION_JSON)
+				.body(BodyInserters.fromValue(book))
+				.exchange()
+				.expectStatus().isOk();
+	}
 
 	@Test
 	@WithMockUser

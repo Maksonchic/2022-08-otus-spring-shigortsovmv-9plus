@@ -8,8 +8,13 @@ function getAuthors() {
 function insertAuthor(params) {
     return fetch(`/api/v1/authors`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: `nickName=${params.nickName}&lastName=${params.lastName}&firstName=${params.firstName}&middleName=${params.middleName}`
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            authorNickName: params.nickName,
+            lastName: params.lastName,
+            firstName: params.firstName,
+            middleName: params.middleName
+        })
     })
         .then(res => res.json())
         .then(res => {
@@ -21,8 +26,10 @@ function insertAuthor(params) {
 function removeAuthor(authorNickName) {
     return fetch(`/api/v1/authors`, {
         method: 'DELETE',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: `authorNickName=${authorNickName}`
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            authorNickName: authorNickName
+        })
     })
         .then(res => {
             if (res.status > 299 || res.status < 200) throw new Error(res.error);

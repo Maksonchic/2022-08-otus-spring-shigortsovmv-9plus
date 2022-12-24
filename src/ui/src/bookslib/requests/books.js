@@ -9,8 +9,10 @@ function getBooks(author) {
 function removeBook(bookId) {
     return fetch(`/api/v1/books`, {
         method: 'DELETE',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: `bookId=${bookId}`
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            bookId: bookId
+        })
     })
         .then(res => {
             if (res.status > 299 || res.status < 200) throw new Error(res.error);
@@ -21,8 +23,13 @@ function removeBook(bookId) {
 function insertBook(params) {
     return fetch(`/api/v1/books`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: `title=${params.title}&page_count=${params.page_count}&authorNickName=${params.authorNickName}&genre=${params.genre}`
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            title: params.title,
+            page_count: params.page_count,
+            authorNickName: params.authorNickName,
+            genre: { genre: params.genre }
+        })
     })
         .then(res => res.json())
         .then(res => {
@@ -43,8 +50,10 @@ function getBookComment(bookId) {
 function removeBookComment(commentId) {
     return fetch(`/api/v1/comments`, {
         method: 'DELETE',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: `commentId=${commentId}`
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            id: commentId
+        })
     })
         .then(res => {
             if (res.status > 299 || res.status < 200) throw new Error(res.error);
@@ -55,8 +64,11 @@ function removeBookComment(commentId) {
 function addBookComment(bookId, message) {
     return fetch(`/api/v1/comments`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: `bookId=${bookId}&message=${message}`
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            bookId: bookId,
+            comments: [{ message: message }]
+        })
     })
         .then(res => res.json())
         .then(res => {

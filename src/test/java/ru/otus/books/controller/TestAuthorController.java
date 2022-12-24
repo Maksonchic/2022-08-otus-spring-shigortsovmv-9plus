@@ -5,10 +5,10 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
@@ -17,10 +17,10 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import ru.otus.books.models.Author;
 import ru.otus.books.repositories.AuthorRepository;
-import ru.otus.books.service.AuthorDtoServiceImpl;
+import ru.otus.books.repositories.BookRepository;
 
-import java.util.ArrayList;
-import java.util.List;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 import static org.mockito.BDDMockito.given;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
@@ -35,14 +35,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayName("Авторы")
 class TestAuthorController {
 
-	@Autowired
-	private MockMvc mvc;
-
-	@Autowired
-	private ObjectMapper mapper;
+	@MockBean
+	AuthorRepository authorRepository;
 
 	@MockBean
-	private AuthorRepository repo;
+	BookRepository bookRepository;
+
+	@Autowired
+	WebTestClient webClient;
 
 	@Autowired
 	private WebApplicationContext context;
@@ -56,9 +56,12 @@ class TestAuthorController {
 				new Author(2, "qwe", "qweFN", "qweLN", "qweMN", new ArrayList<>()) );
 		given(repo.findAll()).willReturn(authors);
 
-		mvc.perform(get("/api/v1/authors"))
-				.andExpect(status().isOk())
-				.andExpect(content().json(mapper.writeValueAsString(authors)));
+		webClient.post()
+				.uri("/api/v1/authors")
+				.contentType(MediaType.APPLICATION_JSON)
+				.body(BodyInserters.fromValue(author))
+				.exchange()
+				.expectStatus().isOk();
 	}
 
 	@Test
@@ -74,15 +77,8 @@ class TestAuthorController {
 				new ArrayList<>());
 		given(repo.save(author)).willReturn(author);
 
-		mvc.perform(post("/api/v1/authors")
-						.content(String.format("nickName=%s&lastName=%s&firstName=%s&middleName=%s"
-								, author.getNickName()
-								, author.getLastName()
-								, author.getFirstName()
-								, author.getMiddleName()))
-						.contentType(MediaType.APPLICATION_FORM_URLENCODED))
-				.andExpect(status().isOk());
-	}
+		when(authorRepository.findAll())
+				.then((Answer<Flux<Author>>) invocation -> authorFlux);
 
 	@Test
 	@WithMockUser
@@ -94,11 +90,11 @@ class TestAuthorController {
 	}
 
 	@Test
-	@DisplayName("Ошибка")
-	public void deleteAuthorError() throws Exception {
-		mvc.perform(delete("/api/v1/authors")
-						.content("authorNickNam=Michael")
-						.contentType(MediaType.APPLICATION_FORM_URLENCODED))
-				.andExpect(status().is4xxClientError());
+	@DisplayName("404")
+	void testDirtyPath() {
+		webClient.get()
+				.uri("/api/v1/authors/notValid")
+				.exchange()
+				.expectStatus().isNotFound();
 	}
 }
