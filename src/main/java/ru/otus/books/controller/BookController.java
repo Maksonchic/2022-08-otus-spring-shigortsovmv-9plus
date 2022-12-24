@@ -19,14 +19,15 @@ import java.util.List;
 @RestController
 public class BookController {
 
-    @Autowired
-    AuthorDtoService authorService;
+    private final AuthorDtoService authorService;
+    private final BookDtoService bookService;
+    private final CommentDtoService commentService;
 
-    @Autowired
-    BookDtoService bookService;
-
-    @Autowired
-    CommentDtoService commentService;
+    public BookController(AuthorDtoService authorService, BookDtoService bookService, CommentDtoService commentService) {
+        this.authorService = authorService;
+        this.bookService = bookService;
+        this.commentService = commentService;
+    }
 
     @PreAuthorize("hasAuthority('USER')")
     @GetMapping("/api/v1/books/author/{authorNickName}")

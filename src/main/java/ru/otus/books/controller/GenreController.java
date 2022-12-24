@@ -12,8 +12,11 @@ import java.util.List;
 @RestController
 public class GenreController {
 
-    @Autowired
-    GenreDtoService genreService;
+    private final GenreDtoService genreService;
+
+    public GenreController(GenreDtoService genreService) {
+        this.genreService = genreService;
+    }
 
     @PreAuthorize("hasAuthority('USER')")
     @GetMapping("/api/v1/genres")
