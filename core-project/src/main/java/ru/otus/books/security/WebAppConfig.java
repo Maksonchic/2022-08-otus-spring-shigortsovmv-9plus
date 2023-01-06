@@ -17,7 +17,9 @@ public class WebAppConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf().disable().cors().disable()
+                .headers().frameOptions().disable().and()
                 .authorizeRequests().mvcMatchers("/static/**").permitAll().and()
+                .authorizeRequests().mvcMatchers("/h2-console/**").permitAll().and()
                 .authorizeRequests().mvcMatchers("/**").authenticated().and()
                 .formLogin()
                 .and().logout().logoutUrl("/logout")
