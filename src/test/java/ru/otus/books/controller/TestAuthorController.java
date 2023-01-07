@@ -11,9 +11,7 @@ import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import ru.otus.books.models.Author;
 import ru.otus.books.repositories.AuthorRepository;
@@ -47,8 +45,14 @@ class TestAuthorController {
 	@Autowired
 	private WebApplicationContext context;
 
+	@Autowired
+	private WebApplicationContext context;
+
 	@Test
-	@WithMockUser
+	@WithMockUser(
+			username = "USER",
+			authorities = "RONIN"
+	)
 	@DisplayName("Получение всех")
 	public void getAllAuthors() throws Exception {
 		List<Author> authors = List.of(

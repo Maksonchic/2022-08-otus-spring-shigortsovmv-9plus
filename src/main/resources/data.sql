@@ -6,3 +6,7 @@ insert into BOOKS (TITLE, PAGE_COUNT, AUTHOR_ID, GENRE_ID) values ('About you', 
 insert into COMMENTS (MESSAGE, BOOK_ID) values ('So bad, I should have bought a winrar', 1);
 insert into USERS (USERNAME, PASSWORD) values ('user', '$2a$10$/XG76Kd7bpmZvGGXRkU.7ujtFfnANIbGS/to.3qfemdDFtQiIfM5.');
 insert into USERS (USERNAME, PASSWORD) values ('admin', '$2a$10$Ad8v7kiTSOkFK1ZrcEuVbOHWGBtpvutS/B6RMGFol0zxyuySyzcDy');
+insert into ROLES (USER_ID, ROLE_NAME) values (1, 'USER');
+insert into ROLES (USER_ID, ROLE_NAME) values (2, 'RONIN');
+insert into ROLES (USER_ID, ROLE_NAME) values (2, 'ADMIN');
+insert into ROLES (USER_ID, ROLE_NAME) values (2, 'USER');
