@@ -30,8 +30,7 @@ spring:
 
 mongock:
   runner-type: "InitializingBean"
-  change-logs-scan-package:
-    - ru.otus.migrate.changelogs
+  change-logs-scan-package: ru.otus.migrate.changelogs
   mongo-db:
     write-concern:
       journal: false
