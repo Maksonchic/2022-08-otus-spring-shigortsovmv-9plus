@@ -1,16 +1,6 @@
 spring:
   datasource:
-    url: jdbc:h2:mem:testdb
-    initialization-mode: always
-  h2:
-    console:
-      path: /h2-console
-      enabled: true
-      settings:
-        trace: false
-        web-allow-others: true
-  jpa:
-    generate-ddl: false
-    hibernate:
-      ddl-auto: none
-    show-sql: true
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://172.17.40.124:5433/postgres
+    username: postgres
+    password: postgres

@@ -5,6 +5,7 @@ import ru.otus.books.models.Book;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @EqualsAndHashCode
 public class BookDto {
@@ -35,7 +36,7 @@ public class BookDto {
         }
         AuthorDto authorDto = AuthorDto.createDto(book.getAuthor());
         GenreDto genreDto = GenreDto.createDto(book.getGenre());
-        List<CommentDto> commentDtos = book.getComments().stream().map(CommentDto::createDto).toList();
+        List<CommentDto> commentDtos = book.getComments().stream().map(CommentDto::createDto).collect(Collectors.toList());
         return new BookDto(
                 book.getId(),
                 book.getTitle(),
@@ -52,7 +53,7 @@ public class BookDto {
                 bookDto.getPageCount(),
                 AuthorDto.createEntity(bookDto.getAuthor()),
                 GenreDto.createEntity(bookDto.getGenre()),
-                bookDto.getComments().stream().map(CommentDto::createEntity).toList());
+                bookDto.getComments().stream().map(CommentDto::createEntity).collect(Collectors.toList()));
     }
 
     public long getId() {
