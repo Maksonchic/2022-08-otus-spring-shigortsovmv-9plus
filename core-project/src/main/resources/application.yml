@@ -1,3 +1,9 @@
+logging:
+  level:
+    org: ERROR
+    com: ERROR
+  file:
+    name: app.log
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver

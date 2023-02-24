@@ -54,7 +54,12 @@ public class AuthorDto {
                 authorDto.getLastName(),
                 authorDto.getFirstName(),
                 authorDto.getMiddleName(),
+<<<<<<< HEAD
                 authorDto.getBooks().stream().map(BookDto::createEntity).collect(Collectors.toList()));
+=======
+                new Random().nextInt(100),
+                authorDto.getBooks().stream().map(BookDto::createEntity).toList());
+>>>>>>> f88f688e1a2cb839f78b88a72d6e312f6fe66726
     }
 
     public long getId() {
