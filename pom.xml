@@ -6,6 +6,8 @@
 
     <artifactId>BooksLib</artifactId>
     <name>BooksLib</name>
+    <groupId>OTUS-BooksLib</groupId>
+    <version>1.0.1</version>
 
     <packaging>pom</packaging>
 

@@ -16,6 +16,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.util.List;
 import java.util.Objects;
+import java.util.Random;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -40,6 +41,9 @@ public class Author {
     @Column(name = "middle_name")
     private String middleName;
 
+    @Column(name = "age")
+    private int age;
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "author")
     @Fetch(FetchMode.SUBSELECT)
     private List<Book> books;
@@ -50,6 +54,15 @@ public class Author {
         this.lastName = lastName;
         this.firstName = firstName;
         this.middleName = middleName;
+        this.age = new Random().nextInt(100);
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
     }
 
     public long getId() {

@@ -5,6 +5,7 @@ import ru.otus.books.models.Author;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 @EqualsAndHashCode
 public class AuthorDto {
@@ -53,6 +54,7 @@ public class AuthorDto {
                 authorDto.getLastName(),
                 authorDto.getFirstName(),
                 authorDto.getMiddleName(),
+                new Random().nextInt(100),
                 authorDto.getBooks().stream().map(BookDto::createEntity).toList());
     }
 
